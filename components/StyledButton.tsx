@@ -62,6 +62,19 @@ const BUTTON_FILTERED_PROPS = new Set([
   'justifySelf',
   'alignSelf',
   'order',
+  // grid props that should not be forwarded to DOM
+  'gridGap',
+  'gridColumnGap',
+  'gridRowGap',
+  'gridColumn',
+  'gridRow',
+  'gridAutoFlow',
+  'gridAutoColumns',
+  'gridAutoRows',
+  'gridTemplateColumns',
+  'gridTemplateRows',
+  'gridTemplateAreas',
+  'gridArea',
 ]);
 
 const StyledButtonContent = styled.button.withConfig({
