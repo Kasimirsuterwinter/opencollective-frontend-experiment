@@ -64,7 +64,9 @@ export const Flex = styled(Box)<FlexProps>(
 
 Flex.displayName = 'Flex';
 
-export const Grid = styled.div<BoxProps>(
+export const Grid = styled.div.withConfig({
+  shouldForwardProp: prop => defaultShouldForwardProp(prop) && !FILTERED_PROPS.has(prop),
+})<BoxProps>(
   {
     boxSizing: 'border-box',
     display: 'grid',
