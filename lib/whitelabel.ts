@@ -61,7 +61,9 @@ export const getWhitelabelProps = (ctx?: Context): WhitelabelProps => {
     return null;
   }
 
-  const isNonPlatformDomain = !WEBSITE_URL.includes(origin);
+  // In development, localhost should not be treated as a non-platform domain
+  const isLocalhost = origin?.includes('localhost') || origin?.includes('127.0.0.1');
+  const isNonPlatformDomain = !isLocalhost && !WEBSITE_URL.includes(origin);
   const isWhitelabelDomain = isEmpty(WHITELABEL_DOMAINS) ? false : WHITELABEL_DOMAINS.includes(origin);
   const provider = WHITELABEL_PROVIDERS.find(provider => provider.domain === origin);
   return { origin, path, provider, isNonPlatformDomain, isWhitelabelDomain };
