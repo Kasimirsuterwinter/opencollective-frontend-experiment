@@ -57,7 +57,39 @@ export type ContainerProps = FlexboxProps &
     css?: CSSProp;
   };
 
-const FILTERED_PROPS = new Set(['display', 'width', 'height', 'overflow']);
+const FILTERED_PROPS = new Set([
+  'display',
+  'width',
+  'height',
+  'overflow',
+  // flexbox props that should not be forwarded to DOM
+  'alignItems',
+  'alignContent',
+  'justifyItems',
+  'justifyContent',
+  'flexWrap',
+  'flexDirection',
+  'flex',
+  'flexGrow',
+  'flexShrink',
+  'flexBasis',
+  'justifySelf',
+  'alignSelf',
+  'order',
+  // grid props that should not be forwarded to DOM
+  'gridGap',
+  'gridColumnGap',
+  'gridRowGap',
+  'gridColumn',
+  'gridRow',
+  'gridAutoFlow',
+  'gridAutoColumns',
+  'gridAutoRows',
+  'gridTemplateColumns',
+  'gridTemplateRows',
+  'gridTemplateAreas',
+  'gridArea',
+]);
 
 const Container = styled.div.withConfig({
   shouldForwardProp: prop => defaultShouldForwardProp(prop) && !FILTERED_PROPS.has(prop),

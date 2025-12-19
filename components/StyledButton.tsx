@@ -17,6 +17,7 @@ import type { TextTransformProps, WhiteSpaceProps } from '../lib/styled-system-c
 import { textTransform, whiteSpace } from '../lib/styled-system-custom-properties';
 import type { ButtonSize, ButtonStyle } from '../lib/theme/variants/button';
 import { buttonSize, buttonStyle } from '../lib/theme/variants/button';
+import { defaultShouldForwardProp } from '@/lib/styled_components_utils';
 
 import Spinner from './Spinner';
 
@@ -46,7 +47,39 @@ export type StyledButtonProps = BackgroundProps &
  *
  * @see See [styled-system docs](https://github.com/jxnblk/styled-system/blob/master/docs/api.md) for usage of those props
  */
-const StyledButtonContent = styled.button<StyledButtonProps>`
+const BUTTON_FILTERED_PROPS = new Set([
+  // flexbox props that should not be forwarded to DOM
+  'alignItems',
+  'alignContent',
+  'justifyItems',
+  'justifyContent',
+  'flexWrap',
+  'flexDirection',
+  'flex',
+  'flexGrow',
+  'flexShrink',
+  'flexBasis',
+  'justifySelf',
+  'alignSelf',
+  'order',
+  // grid props that should not be forwarded to DOM
+  'gridGap',
+  'gridColumnGap',
+  'gridRowGap',
+  'gridColumn',
+  'gridRow',
+  'gridAutoFlow',
+  'gridAutoColumns',
+  'gridAutoRows',
+  'gridTemplateColumns',
+  'gridTemplateRows',
+  'gridTemplateAreas',
+  'gridArea',
+]);
+
+const StyledButtonContent = styled.button.withConfig({
+  shouldForwardProp: prop => defaultShouldForwardProp(prop) && !BUTTON_FILTERED_PROPS.has(prop),
+})<StyledButtonProps>`
   appearance: none;
   border: none;
   cursor: pointer;

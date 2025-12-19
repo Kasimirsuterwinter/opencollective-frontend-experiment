@@ -23,6 +23,8 @@ import {
   typography,
 } from 'styled-system';
 
+import { defaultShouldForwardProp } from '@/lib/styled_components_utils';
+
 type StyledCardProps = BackgroundProps &
   BorderProps &
   FlexboxProps &
@@ -33,21 +35,55 @@ type StyledCardProps = BackgroundProps &
   ShadowProps &
   ColorProps;
 
+const CARD_FILTERED_PROPS = new Set([
+  // flexbox props that should not be forwarded to DOM
+  'alignItems',
+  'alignContent',
+  'justifyItems',
+  'justifyContent',
+  'flexWrap',
+  'flexDirection',
+  'flex',
+  'flexGrow',
+  'flexShrink',
+  'flexBasis',
+  'justifySelf',
+  'alignSelf',
+  'order',
+  // grid props that should not be forwarded to DOM
+  'gridGap',
+  'gridColumnGap',
+  'gridRowGap',
+  'gridColumn',
+  'gridRow',
+  'gridAutoFlow',
+  'gridAutoColumns',
+  'gridAutoRows',
+  'gridTemplateColumns',
+  'gridTemplateRows',
+  'gridTemplateAreas',
+  'gridArea',
+]);
+
 /**
  * A simple styled-component to contain content in a card UI using styled-system.
  *
  * @see See [styled-system docs](https://github.com/jxnblk/styled-system/blob/master/docs/api.md) for usage of those props
  * @deprecated Use `ui/Card` instead
  */
-const StyledCard = styled.div.attrs<StyledCardProps>(props => ({
-  bg: props.bg ?? 'white.full',
-  borderWidth: props.borderWidth ?? '1px',
-  borderStyle: props.borderStyle ?? 'solid',
-  borderColor: props.borderColor ?? 'black.300',
-  borderRadius: props.borderRadius ?? '8px',
-  overflowX: props.overflowX ?? 'hidden',
-  overflowY: props.overflowY ?? 'hidden',
-}))<StyledCardProps>(compose(flexbox, typography, background, border, shadow, color, layout, position, space));
+const StyledCard = styled.div
+  .withConfig({
+    shouldForwardProp: prop => defaultShouldForwardProp(prop) && !CARD_FILTERED_PROPS.has(prop),
+  })
+  .attrs<StyledCardProps>(props => ({
+    bg: props.bg ?? 'white.full',
+    borderWidth: props.borderWidth ?? '1px',
+    borderStyle: props.borderStyle ?? 'solid',
+    borderColor: props.borderColor ?? 'black.300',
+    borderRadius: props.borderRadius ?? '8px',
+    overflowX: props.overflowX ?? 'hidden',
+    overflowY: props.overflowY ?? 'hidden',
+  }))<StyledCardProps>(compose(flexbox, typography, background, border, shadow, color, layout, position, space));
 
 /** @component */
 export default StyledCard;

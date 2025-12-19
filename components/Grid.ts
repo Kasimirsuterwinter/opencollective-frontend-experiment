@@ -21,7 +21,38 @@ type BoxProps = SpaceProps &
     css?: string | object;
   };
 
-const FILTERED_PROPS = new Set(['display', 'width', 'height']);
+const FILTERED_PROPS = new Set([
+  'display',
+  'width',
+  'height',
+  // flexbox props that should not be forwarded to DOM
+  'alignItems',
+  'alignContent',
+  'justifyItems',
+  'justifyContent',
+  'flexWrap',
+  'flexDirection',
+  'flex',
+  'flexGrow',
+  'flexShrink',
+  'flexBasis',
+  'justifySelf',
+  'alignSelf',
+  'order',
+  // grid props that should not be forwarded to DOM
+  'gridGap',
+  'gridColumnGap',
+  'gridRowGap',
+  'gridColumn',
+  'gridRow',
+  'gridAutoFlow',
+  'gridAutoColumns',
+  'gridAutoRows',
+  'gridTemplateColumns',
+  'gridTemplateRows',
+  'gridTemplateAreas',
+  'gridArea',
+]);
 
 export const Box = styled.div.withConfig({
   shouldForwardProp: prop => defaultShouldForwardProp(prop) && !FILTERED_PROPS.has(prop),
@@ -46,7 +77,9 @@ export const Flex = styled(Box)<FlexProps>(
 
 Flex.displayName = 'Flex';
 
-export const Grid = styled.div<BoxProps>(
+export const Grid = styled.div.withConfig({
+  shouldForwardProp: prop => defaultShouldForwardProp(prop) && !FILTERED_PROPS.has(prop),
+})<BoxProps>(
   {
     boxSizing: 'border-box',
     display: 'grid',

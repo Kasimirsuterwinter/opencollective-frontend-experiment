@@ -17,22 +17,25 @@ export type WhitelabelProps = {
 };
 
 const getOriginAndPath = (ctx?: Context) => {
-  if (typeof window !== 'undefined') {
-    return { origin: window.location.origin, path: window.location.pathname };
-  } else {
+  // Prefer server request data when available (even in tests with JSDOM)
+  if (ctx?.req?.headers) {
     let origin, path;
-    if (ctx?.req?.headers) {
-      const proto = ctx.req.headers['x-forwarded-proto'] || 'https';
-      const hostname = ctx.req.headers['original-hostname'] || ctx.req.headers['host'];
-      if (hostname) {
-        origin = `${proto}://${hostname}`;
-      }
+    const proto = ctx.req.headers['x-forwarded-proto'] || 'https';
+    const hostname = ctx.req.headers['original-hostname'] || ctx.req.headers['host'];
+    if (hostname) {
+      origin = `${proto}://${hostname}`;
     }
     if (ctx?.req?.url && !ctx.req.url.startsWith('/_next')) {
       path = ctx.req.url;
     }
     return { origin, path };
   }
+
+  if (typeof window !== 'undefined') {
+    return { origin: window.location.origin, path: window.location.pathname };
+  }
+
+  return { origin: undefined, path: undefined };
 };
 
 /**
@@ -61,7 +64,21 @@ export const getWhitelabelProps = (ctx?: Context): WhitelabelProps => {
     return null;
   }
 
-  const isNonPlatformDomain = !WEBSITE_URL.includes(origin);
+  // In development, localhost should not be treated as a non-platform domain
+  let hostname: string | null = null;
+  try {
+    hostname = new URL(origin).hostname;
+  } catch {
+    hostname = null;
+  }
+  const isLocalhost =
+    hostname === 'localhost' ||
+    hostname?.endsWith('.localhost') ||
+    hostname === '127.0.0.1' ||
+    hostname === '::1' ||
+    hostname === '[::1]' ||
+    hostname === '0.0.0.0';
+  const isNonPlatformDomain = !isLocalhost && !WEBSITE_URL.includes(origin);
   const isWhitelabelDomain = isEmpty(WHITELABEL_DOMAINS) ? false : WHITELABEL_DOMAINS.includes(origin);
   const provider = WHITELABEL_PROVIDERS.find(provider => provider.domain === origin);
   return { origin, path, provider, isNonPlatformDomain, isWhitelabelDomain };
