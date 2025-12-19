@@ -21,7 +21,25 @@ type BoxProps = SpaceProps &
     css?: string | object;
   };
 
-const FILTERED_PROPS = new Set(['display', 'width', 'height']);
+const FILTERED_PROPS = new Set([
+  'display',
+  'width',
+  'height',
+  // flexbox props that should not be forwarded to DOM
+  'alignItems',
+  'alignContent',
+  'justifyItems',
+  'justifyContent',
+  'flexWrap',
+  'flexDirection',
+  'flex',
+  'flexGrow',
+  'flexShrink',
+  'flexBasis',
+  'justifySelf',
+  'alignSelf',
+  'order',
+]);
 
 export const Box = styled.div.withConfig({
   shouldForwardProp: prop => defaultShouldForwardProp(prop) && !FILTERED_PROPS.has(prop),
